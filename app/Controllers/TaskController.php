@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use CodeIgniter\HTTP\ResponseInterface;
 use CodeIgniter\RESTful\ResourceController;
+use App\Models\TaskModel;
 
 class TaskController extends ResourceController
 {
@@ -13,17 +14,23 @@ class TaskController extends ResourceController
     // GET /tasks
     public function index()
     {
-        return $this->respond($this->model->findAll());
+        $tasks = $this->model->findAll();
+        
+        // Convierte cada entidad a array
+        $tasksArray = array_map(fn($task) => $task->toArray(), $tasks);
+        
+        return $this->respond($tasksArray);
     }
 
     // GET /tasks/{id}
-    public function show(int $id = null)
+    public function show($id = null)
     {
         $task = $this->model->find($id);
         if (!$task) {
             return $this->failNotFound("Task with ID $id not found");
         }
-        return $this->respond($task);
+
+        return $this->respond($task->toArray());
     }
 
     // POST /tasks
@@ -44,11 +51,12 @@ class TaskController extends ResourceController
             return $this->failServerError('Failed to create task');
         }
 
-        return $this->respondCreated(['id' => $id, 'message' => 'Task created successfully']);
+        $task = $this->model->find($id);
+        return $this->respondCreated(['task' => $task->toArray(), 'message' => 'Task created successfully']);
     }
 
     // PUT /tasks/{id}
-    public function update(int $id = null)
+    public function update($id = null)
     {
         $data = $this->request->getJSON(true);
 
@@ -57,24 +65,21 @@ class TaskController extends ResourceController
             return $this->failNotFound("Task with ID $id not found");
         }
 
-        if (!$this->validateTask($data, 'update')) {
-            return $this->failValidationErrors($this->validator->getErrors());
-        }
-
         $updated = $this->model->update($id, [
-            'title'     => $data['title']     ?? $task['title'],
-            'completed' => $data['completed'] ?? $task['completed'],
+            'title'     => array_key_exists('title', $data) ? $data['title'] : $task->title,
+            'completed' => array_key_exists('completed', $data) ? (bool)$data['completed'] : $task->completed,
         ]);
 
         if ($updated === false) {
             return $this->failServerError('Failed to update task');
         }
 
-        return $this->respond(['message' => 'Task updated successfully']);
+        $task = $this->model->find($id);
+        return $this->respond(['task' => $task->toArray(), 'message' => 'Task updated successfully']);
     }
 
     // DELETE /tasks/{id}
-    public function delete(int $id = null)
+    public function delete($id = null)
     {
         $task = $this->model->find($id);
         if (!$task) {
@@ -84,7 +89,7 @@ class TaskController extends ResourceController
         if (!$this->model->delete($id)) {
             return $this->failServerError('Failed to delete task');
         }
-        return $this->respondDeleted(['message' => 'Task deleted successfully']);
+        return $this->respondDeleted(['task' => $task->toArray(), 'message' => 'Task deleted successfully']);
     }
 
     // Validation method

@@ -7,4 +7,4 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
-$routes->resource('tasks');
+$routes->resource('tasks', ['controller' => 'TaskController']);
