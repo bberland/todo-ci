@@ -12,8 +12,15 @@ class TaskModelTest extends CIUnitTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Correr migraciones en cada test
+        $migrate = \Config\Services::migrations();
+        $migrate->setNamespace(null);
+        $migrate->latest();
+
         $this->taskModel = new TaskModel();
     }
+
 
     public function testInsertTask()
     {

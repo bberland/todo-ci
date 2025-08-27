@@ -28,7 +28,7 @@ class Database extends Config
         'DSN'          => '',
         'hostname'     => 'db', // use 'localhost' if not using Docker
         'username'     => 'root',
-        'password'     => 'root',
+        'password'     => '',
         'database'     => 'todo_ci',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
@@ -164,9 +164,9 @@ class Database extends Config
      */
     public array $tests = [
         'DSN'         => '',
-        'hostname'    => 'localhost',
+        'hostname'    => 'db',
         'username'    => 'root',
-        'password'    => 'root',
+        'password'    => '',
         'database'    => 'todo_ci_test',
         'DBDriver'    => 'MySQLi',
         'DBPrefix'    => '',  

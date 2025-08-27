@@ -9,6 +9,16 @@ class TaskControllerTest extends CIUnitTestCase
 {
     use FeatureTestTrait;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Correr migraciones en cada test
+        $migrate = \Config\Services::migrations();
+        $migrate->setNamespace(null);
+        $migrate->latest();
+    }
+
     public function testGetTasksReturns200()
     {
         $result = $this->get('/tasks');
