@@ -16,6 +16,6 @@ class TaskModel extends Model
 
     protected $allowedFields = ['title', 'completed'];
 
-    protected $useTimestamps = false; 
+    protected $useTimestamps = true; 
     protected $returnType    = TaskEntity::class;
 }
