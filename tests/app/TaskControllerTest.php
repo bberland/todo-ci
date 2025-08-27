@@ -27,10 +27,15 @@ class TaskControllerTest extends CIUnitTestCase
 
     public function testCreateTask()
     {
-        $result = $this->call('post', 'tasks', [
+        $payload = [
             'title' => 'Test Task',
             'completed' => false,
-        ]);
+        ];
+
+        $result = $this->withBody(json_encode($payload))
+                    ->withHeaders(['Content-Type' => 'application/json'])
+                    ->call('post', 'tasks');
+
         $this->assertTrue($result->isOK());
     }
 }
