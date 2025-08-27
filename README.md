@@ -1,68 +1,110 @@
-# CodeIgniter 4 Application Starter
+# To-Do List con CodeIgniter 4
 
-## What is CodeIgniter?
+Prueba técnica Fullstack Backend con CodeIgniter 4, MySQL y Docker.  
+La aplicación es un "to-do list" que permite crear, listar, editar y eliminar tareas, con frontend en HTML/JS y backend en CodeIgniter 4.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+---
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## 🚀 Requisitos previos
+- Docker y Docker Compose instalados.
+- Puerto 8080 libre para la aplicación.
+- Puerto 3307 libre para MySQL (o modificarlo en docker-compose.yml).
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+---
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+## 📦 Instalación y ejecución
 
-## Installation & updates
+### 1. Clonar el repositorio
+git clone https://github.com/bberland/todo-ci.git  
+cd todo-ci
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+### 2. Construir y levantar los contenedores
+docker-compose up --build -d
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+### 3. Ejecutar migraciones
+Esto creará la tabla tasks en la base de datos:  
+docker exec -it todo_app php spark migrate
 
-## Setup
+---
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+## 🌐 Acceso a la aplicación
 
-## Important Change with index.php
+- Frontend: http://localhost:8080  
+- API Endpoints disponibles:
+  - GET /tasks → Lista todas las tareas.
+  - GET /tasks/{id} → Obtiene una tarea por ID.
+  - POST /tasks → Crea una nueva tarea.
+  - PUT /tasks/{id} → Actualiza una tarea existente.
+  - DELETE /tasks/{id} → Elimina una tarea.
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+Ejemplo con curl:
+curl -X POST http://localhost:8080/tasks -H "Content-Type: application/json" -d '{"title":"Nueva tarea","completed":false}'
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+---
 
-**Please** read the user guide for a better explanation of how CI4 works!
+## 🧪 Ejecutar tests unitarios
 
-## Repository Management
+El proyecto incluye pruebas para TaskModel y TaskController.
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+1. Asegúrate de que los contenedores están corriendo:
+docker-compose up -d
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+2. Ejecutar PHPUnit dentro del contenedor:
+docker exec -it todo_app ./vendor/bin/phpunit
 
-## Server Requirements
+### 📝 Nota sobre los tests
+- Los tests corren migraciones automáticamente en el setUp().
+- Validan la creación, consulta, actualización y eliminación de tareas.
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+---
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+## 🐳 Servicios en Docker
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
+- app → Contenedor con Apache + PHP 8.2 + CodeIgniter.  
+  Se expone en http://localhost:8080
+- db → Contenedor MySQL 8.0.  
+  Usuario: root  
+  Password: root  
+  Base de datos: todo_ci  
+  Puerto expuesto: 3307 (para conexión desde el host).
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+---
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+## 🛠️ Buenas prácticas implementadas
+
+- Backend REST en CodeIgniter 4 con ResourceController.
+- Frontend en JS moderno (fetch + ES6).
+- Docker Compose con servicios app y db.
+- Pruebas unitarias/funcionales con PHPUnit.
+- Git workflow recomendado:
+  - Rama main → estable.
+  - Rama develop → desarrollo.
+
+---
+
+## 📂 Estructura del proyecto
+
+todo-ci/
+├── app/
+│   ├── Controllers/
+│   │   ├── Home.php
+│   │   └── TaskController.php
+│   ├── Models/
+│   │   └── TaskModel.php
+│   ├── Views/
+│   │   └── tasks_view.php
+│   └── Database/
+│       └── Migrations/
+│           └── 2025-XX-XX-XXXX_CreateTasksTable.php
+├── tests/
+│   └── app/
+│       ├── TaskModelTest.php
+│       └── TaskControllerTest.php
+├── public/
+│   └── index.php
+├── docker-compose.yml
+├── Dockerfile
+├── .env
+└── README.md
+
+---

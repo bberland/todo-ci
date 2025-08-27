@@ -23,7 +23,8 @@ class CreateTasksTable extends Migration
                 'type'    => 'BOOLEAN',
                 'default' => false,
             ],
-            'created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP',
+            'created_at datetime default current_timestamp',
+            'updated_at datetime default current_timestamp on update current_timestamp', 
         ]);
         $this->forge->addKey('id', true);
         $this->forge->createTable('tasks');
