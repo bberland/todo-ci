@@ -165,10 +165,10 @@ class Database extends Config
     public array $tests = [
         'DSN'         => '',
         'hostname'    => 'db',
-        'username'    => 'root',
+        'username'    => '',
         'password'    => '',
-        'database'    => 'todo_ci_test',
-        'DBDriver'    => 'MySQLi',
+        'database'    => ':memory:',
+        'DBDriver'    => 'SQLite3',
         'DBPrefix'    => '',  
         'pConnect'    => false,
         'DBDebug'     => true,
