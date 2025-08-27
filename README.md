@@ -21,7 +21,10 @@ cd todo-ci
 ### 2. Construir y levantar los contenedores
 docker-compose up --build -d
 
-### 3. Ejecutar migraciones
+### 3. Instalar dependencias del framework
+docker exec -it todo_app composer install
+
+### 4. Ejecutar migraciones
 Esto creará la tabla tasks en la base de datos:  
 docker exec -it todo_app php spark migrate
 
