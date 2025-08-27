@@ -2,57 +2,28 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To-Do List</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      background: #f4f4f4;
-    }
-    h1 {
-      text-align: center;
-    }
-    #task-form {
-      display: flex;
-      gap: .5rem;
-      margin-bottom: 1rem;
-    }
-    #task-form input {
-      flex: 1;
-      padding: .5rem;
-    }
-    #tasks {
-      list-style: none;
-      padding: 0;
-    }
-    .task {
-      background: white;
-      margin-bottom: .5rem;
-      padding: .5rem 1rem;
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
     .task.completed {
       text-decoration: line-through;
       color: gray;
     }
-    button {
-      margin-left: .5rem;
-      cursor: pointer;
-    }
   </style>
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h1>To-Do List</h1>
+  <div class="container py-5">
+    <h1 class="mb-4 text-center">To-Do List</h1>
 
-  <form id="task-form">
-    <input type="text" id="new-task" placeholder="Escribe una nueva tarea..." required>
-    <button type="submit">Agregar</button>
-  </form>
+    <form id="task-form" class="d-flex mb-4">
+      <input type="text" id="new-task" class="form-control me-2" placeholder="Escribe una nueva tarea..." required>
+      <button type="submit" class="btn btn-primary">Agregar</button>
+    </form>
 
-  <ul id="tasks"></ul>
+    <ul id="tasks" class="list-group"></ul>
+  </div>
 
   <script type="module">
     const API_URL = '/tasks';
@@ -77,13 +48,15 @@
       taskList.innerHTML = '';
       tasks.forEach(task => {
           const li = document.createElement('li');
-          li.className = `task ${task.completed ? 'completed' : ''}`;
+          li.className = `list-group-item d-flex justify-content-between align-items-center`;
           li.innerHTML = `
-          <span contenteditable="true" data-id="${task.id}">${task.title}</span>
-          <div>
-              <button data-action="toggle" data-id="${task.id}">${task.completed ? 'Desmarcar' : 'Completar'}</button>
-              <button data-action="delete" data-id="${task.id}">Eliminar</button>
-          </div>
+            <span class="task ${task.completed ? 'completed' : ''}">${task.title}</span>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-${task.completed ? 'warning' : 'success'}" data-action="toggle" data-id="${task.id}">
+                ${task.completed ? 'Desmarcar' : 'Completar'}
+              </button>
+              <button class="btn btn-sm btn-danger" data-action="delete" data-id="${task.id}">Eliminar</button>
+            </div>
           `;
           taskList.appendChild(li);
       });
@@ -113,8 +86,8 @@
       }
 
       if (action === 'toggle') {
-        const li = e.target.closest('li');
-        const completed = li.classList.contains('completed');
+        const span = e.target.closest('li').querySelector('span');
+        const completed = span.classList.contains('completed');
         await request(`${API_URL}/${id}`, {
           method: 'PUT',
           body: JSON.stringify({ completed: !completed }),
@@ -142,5 +115,7 @@
     // Inicial
     renderTasks();
   </script>
+  <!-- Bootstrap JS Bundle CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
