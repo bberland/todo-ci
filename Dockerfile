@@ -14,6 +14,9 @@ RUN a2enmod rewrite
 # Permitir .htaccess
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
+# Instalar Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 # Copiar proyecto
 WORKDIR /var/www/html
 COPY . .
